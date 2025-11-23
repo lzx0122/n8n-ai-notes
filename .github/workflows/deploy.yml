@@ -25,4 +25,9 @@ jobs:
             fi
             cd /root/n8n-ai-notes
             git pull
+            if [ ! -d "venv" ]; then
+              python3 -m venv venv
+            fi
+            source venv/bin/activate
+            pip install -r requirements.txt
             systemctl restart n8n-ai-notes
