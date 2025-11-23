@@ -4,6 +4,7 @@ from typing import List, Optional, Any
 import time
 
 from supabase_client import get_supabase_client
+from embedding_model import embed_text
 
 app = FastAPI()
 supabase = get_supabase_client()
@@ -21,12 +22,16 @@ def root():
 @app.post("/log")
 def log_entry(entry: LogEntry):
     ts = int(time.time())
+
+    # 如果沒有 embedding，自動生成
+    final_embedding = entry.embedding or embed_text(entry.prompt + " " + entry.response)
+
     data = {
         "source": entry.source,
         "prompt": entry.prompt,
         "response": entry.response,
         "ts": ts,
-        "embedding": entry.embedding,
+        "embedding": final_embedding,
     }
 
     try:
@@ -34,12 +39,10 @@ def log_entry(entry: LogEntry):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    # 成功 → result.data 必須存在
     if not result.data:
         raise HTTPException(status_code=500, detail="Supabase insert returned no data")
 
     return {"status": "success", "id": result.data[0]["id"]}
-
 
 @app.get("/recent")
 def get_recent(hours: int = Query(6, ge=1)):
