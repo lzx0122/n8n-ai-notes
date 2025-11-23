@@ -20,6 +20,9 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: 22
           script: |
+            if [ ! -d "/root/n8n-ai-notes/.git" ]; then
+              git clone https://github.com/lzx0122/n8n-ai-notes.git /root/n8n-ai-notes
+            fi
             cd /root/n8n-ai-notes
             git pull
             systemctl restart n8n-ai-notes
