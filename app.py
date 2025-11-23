@@ -30,7 +30,7 @@ def log_entry(entry: LogEntry):
         "embedding": entry.embedding
     }
     result = supabase.table("notes").insert(data).execute()
-    if result.status_code != 201:
+    if result.status != 201:
         raise HTTPException(status_code=500, detail="Failed to insert log entry")
     return {"status": "success", "id": result.data[0]["id"]}
 
@@ -39,6 +39,6 @@ def get_recent(hours: int = Query(6, ge=1)):
     now_ts = int(time.time())
     cutoff_ts = now_ts - hours * 3600
     result = supabase.table("notes").select("*").gte("ts", cutoff_ts).order("ts", asc=True).execute()
-    if result.status_code != 200:
+    if result.status != 200:
         raise HTTPException(status_code=500, detail="Failed to fetch recent logs")
     return result.data
