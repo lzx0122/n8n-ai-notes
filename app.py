@@ -7,7 +7,7 @@ from supabase_client import get_supabase_client
 from embedding_model import embed_text
 
 
-app = FastMCP("ai-notes", mode="http", port=8002)
+app = FastMCP("ai-notes", port=8002)
 supabase = get_supabase_client()
 
 # ====== Pydantic Model (沿用你的 FastAPI 寫法) ======
