@@ -1,15 +1,8 @@
-from huggingface_hub import hf_hub_download
-import onnxruntime as ort
-import numpy as np
+from sentence_transformers import SentenceTransformer
 
-repo_id = "BAAI/bge-m3"
-model_file = "onnx/model.onnx"
-
-model_path = hf_hub_download(repo_id=repo_id, filename=model_file)
-
-session = ort.InferenceSession(model_path, providers=["CPUExecutionProvider"])
+# 使用 MiniLM，輕量＋高品質
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
 def embed_text(text: str):
-    inputs = {"input_text": np.array([text])}
-    outputs = session.run(None, inputs)
-    return outputs[0][0].tolist()
+    emb = model.encode(text, convert_to_numpy=True)
+    return emb.tolist()
