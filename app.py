@@ -1,5 +1,4 @@
 from mcp.server.fastmcp import FastMCP
-from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional, Any
 import time
@@ -14,9 +13,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 logging.getLogger().setLevel(logging.ERROR)
 hf_logging.set_verbosity_error()
 
-app = FastAPI()
-mcp = FastMCP("ai-notes")
-app.include_router(mcp.router) 
+app = FastMCP("ai-notes")
 supabase = get_supabase_client()
 
 # ====== Pydantic Model (沿用你的 FastAPI 寫法) ======
@@ -84,9 +81,6 @@ def recent_tool(hours: int = 6):
         "count": len(result.data),
         "items": result.data,
     }
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
 
 # ====== 啟動 MCP Server ======
 if __name__ == "__main__":
