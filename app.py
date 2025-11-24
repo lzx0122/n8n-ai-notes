@@ -87,4 +87,7 @@ def health_check():
 
 # ====== 啟動 MCP Server ======
 if __name__ == "__main__":
-    app.run()
+    app.run(
+        transport="https",
+        port=8001,
+    )
