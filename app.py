@@ -1,4 +1,5 @@
 from mcp.server.fastmcp import FastMCP
+from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional, Any
 import time
@@ -13,7 +14,9 @@ sys.stdout.reconfigure(encoding='utf-8')
 logging.getLogger().setLevel(logging.ERROR)
 hf_logging.set_verbosity_error()
 
-app = FastMCP("ai-notes")
+app = FastAPI()
+mcp = FastMCP("ai-notes")
+app.include_router(mcp.router) 
 supabase = get_supabase_client()
 
 # ====== Pydantic Model (沿用你的 FastAPI 寫法) ======
