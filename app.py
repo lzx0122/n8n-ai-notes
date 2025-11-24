@@ -5,13 +5,7 @@ import time
 
 from supabase_client import get_supabase_client
 from embedding_model import embed_text
-import sys
-import logging
-from transformers.utils import logging as hf_logging
 
-sys.stdout.reconfigure(encoding='utf-8')
-logging.getLogger().setLevel(logging.ERROR)
-hf_logging.set_verbosity_error()
 
 app = FastMCP("ai-notes", port=8002)
 supabase = get_supabase_client()
