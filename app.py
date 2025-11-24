@@ -13,7 +13,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 logging.getLogger().setLevel(logging.ERROR)
 hf_logging.set_verbosity_error()
 
-app = FastMCP("ai-notes")
+app = FastMCP("ai-notes", port=8002)
 supabase = get_supabase_client()
 
 # ====== Pydantic Model (沿用你的 FastAPI 寫法) ======
@@ -84,8 +84,4 @@ def recent_tool(hours: int = 6):
 
 # ====== 啟動 MCP Server ======
 if __name__ == "__main__":
-    app.run(
-        transport="sse",  # 明確指定 SSE
-        host="127.0.0.1",
-        port=8002,
-    )
+    app.run()
