@@ -1,3 +1,4 @@
+print("embedding_model.py 開始載入")
 from sentence_transformers import SentenceTransformer
 
 # 使用 MiniLM，輕量＋高品質
