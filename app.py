@@ -85,6 +85,7 @@ def recent_tool(hours: int = 6):
 # ====== 啟動 MCP Server ======
 if __name__ == "__main__":
     app.run(
-        transport="https",
+        transport="sse",  # 明確指定 SSE
+        host="127.0.0.1",
         port=8002,
     )
