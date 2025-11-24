@@ -1,3 +1,4 @@
+print("=== MCP app.py 開始執行 ===")
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel
 from typing import List, Optional, Any
