@@ -78,4 +78,5 @@ def recent_tool(hours: int = 6):
 
 # ====== 啟動 MCP Server ======
 if __name__ == "__main__":
+    print("MCP Server is starting...")
     app.run()
