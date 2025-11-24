@@ -1,34 +1,81 @@
 from mcp.server.fastmcp import FastMCP
+from pydantic import BaseModel
+from typing import List, Optional, Any
+import time
+
 from supabase_client import get_supabase_client
 from embedding_model import embed_text
-import time
 
 app = FastMCP("ai-notes")
 supabase = get_supabase_client()
 
-@app.tool()
-def log(source: str, prompt: str, response: str, embedding: list = None):
+# ====== Pydantic Model (沿用你的 FastAPI 寫法) ======
+class LogEntry(BaseModel):
+    source: str
+    prompt: str
+    response: str
+    embedding: Optional[List[Any]] = None
+
+
+# ====== MCP Tool: log ======
+@app.tool("log")
+def log_tool(
+    source: str,
+    prompt: str,
+    response: str,
+    embedding: Optional[List[Any]] = None,
+):
     ts = int(time.time())
+
+    # 自動 embedding
     final_embedding = embedding or embed_text(prompt + " " + response)
 
-    supabase.table("notes").insert({
+    data = {
         "source": source,
         "prompt": prompt,
         "response": response,
         "ts": ts,
-        "embedding": final_embedding
-    }).execute()
+        "embedding": final_embedding,
+    }
 
-    return {"status": "ok"}
+    try:
+        result = supabase.table("notes").insert(data).execute()
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+    if not result.data:
+        return {"status": "error", "message": "Supabase insert returned no data"}
+
+    return {
+        "status": "success",
+        "id": result.data[0]["id"],
+        "ts": ts
+    }
 
 
-@app.tool()
-def recent(hours: int = 6):
-    now = int(time.time())
-    cutoff = now - hours * 3600
-    rows = supabase.table("notes").select("*").gte("ts", cutoff).execute().data
-    return rows
+# ====== MCP Tool: recent ======
+@app.tool("recent")
+def recent_tool(hours: int = 6):
+    now_ts = int(time.time())
+    cutoff_ts = now_ts - hours * 3600
+
+    try:
+        result = (
+            supabase.table("notes")
+            .select("*")
+            .gte("ts", cutoff_ts)
+            .order("ts", desc=False)
+            .execute()
+        )
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+    return {
+        "count": len(result.data),
+        "items": result.data,
+    }
 
 
+# ====== 啟動 MCP Server ======
 if __name__ == "__main__":
     app.run()
