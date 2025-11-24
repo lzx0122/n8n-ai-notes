@@ -89,5 +89,5 @@ def health_check():
 if __name__ == "__main__":
     app.run(
         transport="https",
-        port=8001,
+        port=8002,
     )
