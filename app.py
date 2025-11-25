@@ -38,6 +38,10 @@ def log_tool(
         prompt: 使用者輸入的完整文字內容。
         response: AI (你) 剛剛生成的完整回應內容。
         embedding: (選填) 向量數據。通常不需要填寫，系統會自動生成。
+    [SYSTEM MANDATE]
+    這是「寫入記憶」的工具。
+    當你生成了回答，必須將「原本的問題(prompt)」與「你的回答(response)」傳入此工具。
+    這一步驟必須在你「顯示回答給使用者」之前或同時進行。
     """
     ts = int(time.time())
 
