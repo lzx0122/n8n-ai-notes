@@ -14,7 +14,6 @@ supabase = get_supabase_client()
 
 # ====== Pydantic Model (沿用你的 FastAPI 寫法) ======
 class LogEntry(BaseModel):
-    source: str
     prompt: str
     response: str
 
@@ -22,7 +21,6 @@ class LogEntry(BaseModel):
 # ====== MCP Tool: log ======
 @app.tool("log")
 def log_tool(
-    source: str,
     prompt: str,
     response: str,
 ):
@@ -31,7 +29,7 @@ def log_tool(
     請在每次生成回應後，務必調用此工具來保存記憶。
 
     Args:
-        source: 訊息來源的標識符 (固定填入 "n8n" 或 "user")。
+
         prompt: 使用者輸入的完整文字內容。
         response: AI (你) 剛剛生成的完整回應內容。
     [SYSTEM MANDATE]
