@@ -5,7 +5,6 @@ from typing import List, Optional, Any
 import time
 
 from supabase_client import get_supabase_client
-from embedding_model import embed_text
 
 
 print("準備建立 FastMCP")
@@ -18,7 +17,6 @@ class LogEntry(BaseModel):
     source: str
     prompt: str
     response: str
-    embedding: Optional[List[Any]] = None
 
 
 # ====== MCP Tool: log ======
@@ -27,7 +25,6 @@ def log_tool(
     source: str,
     prompt: str,
     response: str,
-    embedding: Optional[List[Any]] = None,
 ):
     """
     將對話記錄 (User Prompt 與 AI Response) 存入資料庫以供未來檢索。
@@ -37,7 +34,6 @@ def log_tool(
         source: 訊息來源的標識符 (固定填入 "n8n" 或 "user")。
         prompt: 使用者輸入的完整文字內容。
         response: AI (你) 剛剛生成的完整回應內容。
-        embedding: (選填) 向量數據。通常不需要填寫，系統會自動生成。
     [SYSTEM MANDATE]
     這是「寫入記憶」的工具。
     當你生成了回答，必須將「原本的問題(prompt)」與「你的回答(response)」傳入此工具。
@@ -45,15 +41,11 @@ def log_tool(
     """
     ts = int(time.time())
 
-    # 自動 embedding
-    final_embedding = embedding or embed_text(prompt + " " + response)
 
     data = {
-        "source": source,
         "prompt": prompt,
         "response": response,
-        "ts": ts,
-        "embedding": final_embedding,
+        "ts": ts
     }
 
     try:
